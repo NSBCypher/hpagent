@@ -23,7 +23,7 @@ class HttpProxyAgent extends http.Agent {
             agent: false
         }
 
-        if (this.proxy.username != null && this.proxy.password != null) {
+        if (this.proxy.username && this.proxy.password) {
             const base64 = Buffer.from(`${decodeURIComponent(this.proxy.username)}:${decodeURIComponent(this.proxy.password)}`).toString('base64')
             requestOptions.headers['proxy-authorization'] = `Basic ${base64}`
         }
@@ -67,10 +67,9 @@ class HttpsProxyAgent extends https.Agent {
             agent: false
         }
 
-        if (this.proxy.username != null && this.proxy.password != null) {
+        if (this.proxy.username && this.proxy.password) {
             const base64 = Buffer.from(`${decodeURIComponent(this.proxy.username)}:${decodeURIComponent(this.proxy.password)}`).toString('base64')
             requestOptions.headers['proxy-authorization'] = `Basic ${base64}`
-
         }
 
         const request = (this.proxy.protocol === 'http:' ? http : https).request(requestOptions)
