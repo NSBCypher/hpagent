@@ -30,11 +30,13 @@ class HttpProxyAgent extends http.Agent {
 
         const request = (this.proxy.protocol === 'http:' ? http : https).request(requestOptions)
         request.once('connect', (response, socket, head) => {
+            socket.setNoDelay();
             request.removeAllListeners()
             socket.removeAllListeners()
             if (response.statusCode === 200) {
                 callback(null, socket)
             } else {
+                socket.destroy();
                 callback(new Error(`Bad response: ${response.statusCode}`), null)
             }
         })
@@ -74,12 +76,15 @@ class HttpsProxyAgent extends https.Agent {
 
         const request = (this.proxy.protocol === 'http:' ? http : https).request(requestOptions)
         request.once('connect', (response, socket, head) => {
+            socket.setNoDelay();
             request.removeAllListeners()
             socket.removeAllListeners()
             if (response.statusCode === 200) {
                 const secureSocket = super.createConnection({...options, socket})
+                secureSocket.setNoDelay();
                 callback(null, secureSocket)
             } else {
+                socket.destroy();
                 callback(new Error(`Bad response: ${response.statusCode}`), null)
             }
         })
